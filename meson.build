@@ -15,10 +15,6 @@ project_dependencies = [
     dependency('vma')
 ]
 
-
-bin_dir = meson.current_source_dir() / 'bin'
-
-
 shader_src = meson.current_source_dir() / 'shaders'
 shader_globs = [
     'shaders/gradient.comp',
@@ -58,8 +54,6 @@ custom_target(
     output: 'shaders',
     command: ['echo', 'Generated shaders']
 )
-
-
 
 
 subproject('vkbootstrap')
