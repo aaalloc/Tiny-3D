@@ -1,0 +1,7 @@
+[wrap-file]
+directory = fastgltf-0.7.1
+
+source_url = https://github.com/spnda/fastgltf/archive/refs/tags/v0.7.1.tar.gz
+source_filename = fastgltf-0.7.1.tar.gz
+source_hash = 44bcb025dd5cd480236a3bc7a3f8c9a708a801ed773b7859677440d22e0e1e7c
+method = cmake
