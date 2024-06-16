@@ -1,0 +1,4 @@
+[wrap-file]
+
+[provide]
+vkbootstrap = vkbootstrap_dep

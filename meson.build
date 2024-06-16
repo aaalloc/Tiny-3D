@@ -4,6 +4,7 @@ project('vulkan_guide',
 )
 fs = import('fs') 
 
+subproject('vkbootstrap')
 
 project_dependencies = [
     dependency('vulkan', required: true),
@@ -12,7 +13,8 @@ project_dependencies = [
     dependency('fmt', required: true, fallback: ['fmt', 'fmt_dep']),
     dependency('sdl2', required: true, fallback: ['sdl2', 'sdl2_dep']),
     dependency('stb_image'),
-    dependency('vma')
+    dependency('vkbootstrap'),
+    dependency('vma'),
 ]
 
 shader_src = meson.current_source_dir() / 'shaders'
@@ -56,7 +58,6 @@ custom_target(
 )
 
 
-subproject('vkbootstrap')
 subproject('imgui')
 
 executable(
