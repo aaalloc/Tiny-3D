@@ -1,13 +1,27 @@
-﻿// vulkan_guide.h : Include file for standard system include files,
-// or project specific include files.
+﻿#pragma once
 
-#pragma once
+#include <vk_initializers.h>
+#include <vk_types.h>
 
-#include "vk_types.h"
+// bootstrap library
+#include "VkBootstrap.h"
 
 class VulkanEngine
 {
   public:
+    VkInstance _instance;                      // Vulkan library handle
+    VkDebugUtilsMessengerEXT _debug_messenger; // Vulkan debug output handle
+    VkPhysicalDevice _chosenGPU;               // GPU chosen as the default device
+    VkDevice _device;                          // Vulkan device for commands
+    VkSurfaceKHR _surface;
+
+    VkSwapchainKHR _swapchain;
+    VkFormat _swapchainImageFormat;
+
+    std::vector<VkImage> _swapchainImages;
+    std::vector<VkImageView> _swapchainImageViews;
+    VkExtent2D _swapchainExtent; // Vulkan window surface
+
     bool _isInitialized{false};
     int _frameNumber{0};
     bool stop_rendering{false};
@@ -28,4 +42,12 @@ class VulkanEngine
 
     // run main loop
     void run();
+
+  private:
+    void init_vulkan();
+    void init_swapchain();
+    void init_commands();
+    void init_sync_structures();
+    void create_swapchain(uint32_t width, uint32_t height);
+    void destroy_swapchain();
 };
