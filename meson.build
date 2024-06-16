@@ -62,7 +62,6 @@ custom_target(
 
 
 
-subproject('volk')
 subproject('vkbootstrap')
 subproject('imgui')
 
