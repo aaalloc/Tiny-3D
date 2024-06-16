@@ -1,4 +1,10 @@
 {
     "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
-    "C_Cpp.default.compileCommands": "/home/yanovskyy/Documents/projects/vk_render/builddir/compile_commands.json"
+    "C_Cpp.default.compileCommands": "/home/yanovskyy/Documents/projects/vk_render/builddir/compile_commands.json",
+    "files.associations": {
+        "*.tsx": "typescriptreact",
+        "*.y": "yacc",
+        "*.sh": "jinja-shell",
+        "stdexcept": "cpp"
+    }
 }
