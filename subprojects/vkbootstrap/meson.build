@@ -8,7 +8,7 @@ sources = [
 ]
 
 library(
-    'vkbootstrap',
+    meson.project_name(),
     sources,
     install: true
 )
