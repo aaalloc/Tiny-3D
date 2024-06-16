@@ -11,6 +11,8 @@ project_dependencies = [
     dependency('glm', required: true, fallback: ['glm', 'glm_dep']),
     dependency('fmt', required: true, fallback: ['fmt', 'fmt_dep']),
     dependency('sdl2', required: true, fallback: ['sdl2', 'sdl2_dep']),
+    dependency('stb_image'),
+    dependency('vma')
 ]
 
 
@@ -57,6 +59,12 @@ custom_target(
     command: ['echo', 'Generated shaders']
 )
 
+
+
+
+subproject('vma')
+subproject('volk')
+subproject('vkbootstrap')
 
 executable(
     'engine',

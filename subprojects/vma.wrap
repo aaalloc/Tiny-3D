@@ -1,0 +1,4 @@
+[wrap-file]
+
+[provide]
+vma = vma_dep

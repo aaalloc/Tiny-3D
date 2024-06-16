@@ -1,0 +1,4 @@
+[wrap-file]
+
+[provide]
+stb_image = stb_image_dep
