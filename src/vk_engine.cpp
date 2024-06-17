@@ -121,7 +121,7 @@ void VulkanEngine::destroy_swapchain()
 {
     vkDestroySwapchainKHR(_device, _swapchain, nullptr);
 
-    for (int i = 0; i < _swapchainImageViews.size(); i++)
+    for (size_t i = 0; i < _swapchainImageViews.size(); i++)
         vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
 }
 

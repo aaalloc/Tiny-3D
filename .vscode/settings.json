@@ -6,5 +6,6 @@
         "*.y": "yacc",
         "*.sh": "jinja-shell",
         "stdexcept": "cpp"
-    }
+    },
+    "mesonbuild.configureOnOpen": false
 }
