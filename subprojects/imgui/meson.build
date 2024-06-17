@@ -21,7 +21,7 @@ sources = [
 
 subproject('volk')
 
-library(
+imgui_lib = library(
     meson.project_name(),
     sources,
     dependencies: [
@@ -29,4 +29,9 @@ library(
         dependency('sdl2'),
     ],
     install: true
+)
+
+imgui_dep = declare_dependency(
+    link_with: imgui_lib,
+    include_directories: include_directories('.')
 )

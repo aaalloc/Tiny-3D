@@ -1,6 +1,7 @@
 project('vulkan_guide', 
     'cpp', 
-    default_options: ['default_library=static']
+    default_options: ['default_library=static', 'warning_level=2'],
+
 )
 fs = import('fs') 
 
@@ -15,6 +16,7 @@ project_dependencies = [
     dependency('stb_image'),
     dependency('vkbootstrap'),
     dependency('vma'),
+    dependency('imgui'),
 ]
 
 shader_src = meson.current_source_dir() / 'shaders'
@@ -57,8 +59,6 @@ custom_target(
     command: ['echo', 'Generated shaders']
 )
 
-
-subproject('imgui')
 
 executable(
     'engine',
