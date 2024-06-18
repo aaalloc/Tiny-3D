@@ -6,14 +6,28 @@
 // bootstrap library
 #include "VkBootstrap.h"
 
+struct FrameData
+{
+    VkCommandPool commandPool;
+    VkCommandBuffer mainCommandBuffer;
+    VkSemaphore swapchainSemaphore; // for render commands wait on the swapchain image request
+    VkSemaphore renderSemaphore;    // control presenting the image to the OS after drawing finish
+    VkFence renderFence;            // let us wait for the draw command of a given frame to be finished
+};
+
+constexpr unsigned int FRAME_OVERLAP = 2;
+
 class VulkanEngine
 {
   public:
+    FrameData _frames[FRAME_OVERLAP] = {0};
     VkInstance _instance;                      // Vulkan library handle
     VkDebugUtilsMessengerEXT _debug_messenger; // Vulkan debug output handle
     VkPhysicalDevice _chosenGPU;               // GPU chosen as the default device
     VkDevice _device;                          // Vulkan device for commands
     VkSurfaceKHR _surface;
+    VkQueue _graphicQueue;
+    uint32_t _graphicsQueueFamily;
 
     VkSwapchainKHR _swapchain;
     VkFormat _swapchainImageFormat;
@@ -30,6 +44,7 @@ class VulkanEngine
     struct SDL_Window *_window{nullptr};
 
     static VulkanEngine &Get();
+    FrameData &get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; }
 
     // initializes everything in the engine
     void init();

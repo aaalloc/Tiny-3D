@@ -1,8 +1,8 @@
 project('vulkan_guide', 
     'cpp', 
     default_options: ['default_library=static', 'warning_level=2'],
-
 )
+
 fs = import('fs') 
 
 subproject('vkbootstrap')
@@ -78,4 +78,5 @@ executable(
     ],
     dependencies: project_dependencies,
     cpp_pch: 'pch/vk_render.h',
+    cpp_args: ['-Wno-missing-field-initializers', '-Wno-missing-braces']
 )
