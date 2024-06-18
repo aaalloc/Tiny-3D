@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-// #include <vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan.h>
 
@@ -19,6 +19,43 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
+
+struct AllocatedImage
+{
+    VkImage image;
+    VkImageView imageView;
+    VmaAllocation allocation;
+    VkExtent3D imageExtent;
+    VkFormat imageFormat;
+};
+
+struct DeletionQueue
+{
+    std::deque<std::function<void()>> deletors;
+
+    void push_function(std::function<void()> &&function) { deletors.push_back(function); }
+
+    void flush()
+    {
+        // reverse iterate the deletion queue to execute all the functions
+        for (auto it = deletors.rbegin(); it != deletors.rend(); it++)
+        {
+            (*it)(); // call functors
+        }
+
+        deletors.clear();
+    }
+};
+
+struct FrameData
+{
+    DeletionQueue deletionQueue;
+    VkCommandPool commandPool;
+    VkCommandBuffer mainCommandBuffer;
+    VkSemaphore swapchainSemaphore; // for render commands wait on the swapchain image request
+    VkSemaphore renderSemaphore;    // control presenting the image to the OS after drawing finish
+    VkFence renderFence;            // let us wait for the draw command of a given frame to be finished
+};
 
 #define VK_CHECK(x)                                                                                                    \
     do                                                                                                                 \
