@@ -233,7 +233,7 @@ void VulkanEngine::draw()
 
     // prepare the submission to the queue.
     // we want to wait on the _presentSemaphore, as that semaphore is signaled when the swapchain is ready
-    // we will signal the _renderSemaphore, to signal that rendering has finished
+    // we will signal the renderSemaphore, to signal that rendering has finished
 
     VkCommandBufferSubmitInfo cmdinfo = vkinit::command_buffer_submit_info(cmd);
 
@@ -244,13 +244,13 @@ void VulkanEngine::draw()
 
     VkSubmitInfo2 submit = vkinit::submit_info(&cmdinfo, &signalInfo, &waitInfo);
 
-    // submit command buffer to the queue and execute it.
-    //  _renderFence will now block until the graphic commands finish execution
+    //  submit command buffer to the queue and execute it.
+    //  renderFence will now block until the graphic commands finish execution
     VK_CHECK(vkQueueSubmit2(_graphicQueue, 1, &submit, get_current_frame().renderFence));
 
-    // prepare present
+    //  prepare present
     //  this will put the image we just rendered to into the visible window.
-    //  we want to wait on the _renderSemaphore for that,
+    //  we want to wait on the renderSemaphore for that,
     //  as its necessary that drawing commands have finished before the image is displayed to the user
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
