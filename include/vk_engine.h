@@ -48,6 +48,10 @@ class VulkanEngine
     VkPipeline _gradientPipeline;
     VkPipelineLayout _gradientPipelineLayout;
 
+    VkFence _immFence;
+    VkCommandBuffer _immCommandBuffer;
+    VkCommandPool _immCommandPool;
+
     VmaAllocator _allocator;
 
     // draw resources
@@ -61,6 +65,8 @@ class VulkanEngine
 
     static VulkanEngine &Get();
     FrameData &get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; }
+
+    void immediate_submit(std::function<void(VkCommandBuffer cmd)> &&function);
 
     // initializes everything in the engine
     void init();
@@ -84,5 +90,7 @@ class VulkanEngine
     void init_background_pipelines();
     void create_swapchain(uint32_t width, uint32_t height);
     void destroy_swapchain();
+    void init_imgui();
     void draw_background(VkCommandBuffer cmd);
+    void draw_imgui(VkCommandBuffer cmd, VkImageView targetImageView);
 };
