@@ -126,7 +126,7 @@ void VulkanEngine::init_background_pipelines()
     vkDestroyShaderModule(_device, gradientShader, nullptr);
     vkDestroyShaderModule(_device, skyShader, nullptr);
     _mainDeletionQueue.push_function(
-        [=]()
+        [=, this]()
         {
             vkDestroyPipelineLayout(_device, _gradientPipelineLayout, nullptr);
             vkDestroyPipeline(_device, sky.pipeline, nullptr);
@@ -248,7 +248,7 @@ void VulkanEngine::init_imgui()
 
     // add the destroy the imgui created structures
     _mainDeletionQueue.push_function(
-        [=]()
+        [=, this]()
         {
             ImGui_ImplVulkan_Shutdown();
             vkDestroyDescriptorPool(_device, imguiPool, nullptr);
@@ -388,7 +388,7 @@ void VulkanEngine::init_commands()
     // allocate the command buffer for immediate submits
     VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_immCommandPool, 1);
     VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_immCommandBuffer));
-    _mainDeletionQueue.push_function([=]() { vkDestroyCommandPool(_device, _immCommandPool, nullptr); });
+    _mainDeletionQueue.push_function([=, this]() { vkDestroyCommandPool(_device, _immCommandPool, nullptr); });
 }
 
 void VulkanEngine::init_sync_structures()
@@ -408,7 +408,7 @@ void VulkanEngine::init_sync_structures()
     }
 
     VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_immFence));
-    _mainDeletionQueue.push_function([=]() { vkDestroyFence(_device, _immFence, nullptr); });
+    _mainDeletionQueue.push_function([=, this]() { vkDestroyFence(_device, _immFence, nullptr); });
 }
 
 /*

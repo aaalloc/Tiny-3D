@@ -78,5 +78,5 @@ executable(
     ],
     dependencies: project_dependencies,
     cpp_pch: 'pch/vk_render.h',
-    cpp_args: ['-Wno-missing-field-initializers', '-Wno-missing-braces']
+    cpp_args: ['-Wno-missing-field-initializers', '-Wno-missing-braces', '-Wno-unused-parameter']
 )
