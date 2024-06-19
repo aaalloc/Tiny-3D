@@ -17,6 +17,24 @@ loop.
 
 constexpr unsigned int FRAME_OVERLAP = 2;
 
+struct ComputePushConstants
+{
+    glm::vec4 data1;
+    glm::vec4 data2;
+    glm::vec4 data3;
+    glm::vec4 data4;
+};
+
+struct ComputeEffect
+{
+    const char *name;
+
+    VkPipeline pipeline;
+    VkPipelineLayout layout;
+
+    ComputePushConstants data;
+};
+
 class VulkanEngine
 {
   public:
@@ -60,6 +78,9 @@ class VulkanEngine
     int _frameNumber{0};
     bool stop_rendering{false};
     VkExtent2D _windowExtent{1700, 900};
+
+    std::vector<ComputeEffect> backgroundEffects;
+    int currentBackgroundEffect{0};
 
     struct SDL_Window *_window{nullptr};
 
