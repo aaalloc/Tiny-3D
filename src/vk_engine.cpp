@@ -138,18 +138,12 @@ void VulkanEngine::init_vulkan()
 {
     vkb::InstanceBuilder builder;
 
-    auto inst_ret = builder.set_app_name("Vulkan App")
-                        .request_validation_layers(bUseValidationLayers)
-                        .use_default_debug_messenger()
-                        .require_api_version(1, 3, 0)
-                        .build();
-
-    if (!inst_ret)
-    {
-        throw std::runtime_error("Could not initialize Vulkan instance");
-    }
-
-    vkb::Instance vkb_inst = inst_ret.value();
+    vkb::Instance vkb_inst = builder.set_app_name("Vulkan App")
+                                 .request_validation_layers(bUseValidationLayers)
+                                 .use_default_debug_messenger()
+                                 .require_api_version(1, 3, 0)
+                                 .build()
+                                 .value();
 
     _instance = vkb_inst.instance;
     _debug_messenger = vkb_inst.debug_messenger;
@@ -167,17 +161,12 @@ void VulkanEngine::init_vulkan()
     features12.descriptorIndexing = true;
 
     vkb::PhysicalDeviceSelector selector{vkb_inst};
-    auto vkbGpuSelect = selector.set_minimum_version(1, 3)
-                            .set_required_features_13(features13)
-                            .set_required_features_12(features12)
-                            .set_surface(_surface)
-                            .select();
-
-    if (!vkbGpuSelect)
-    {
-        throw std::runtime_error("no_suitable_device");
-    }
-    vkb::PhysicalDevice vkbGpu = vkbGpuSelect.value();
+    vkb::PhysicalDevice vkbGpu = selector.set_minimum_version(1, 3)
+                                     .set_required_features_13(features13)
+                                     .set_required_features_12(features12)
+                                     .set_surface(_surface)
+                                     .select()
+                                     .value();
 
     vkb::DeviceBuilder deviceBuilder{vkbGpu};
     // needs to be checked !
