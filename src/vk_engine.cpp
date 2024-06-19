@@ -22,7 +22,7 @@ VulkanEngine *loadedEngine = nullptr;
 
 VulkanEngine &VulkanEngine::Get() { return *loadedEngine; }
 
-constexpr bool bUseValidationLayers = false;
+constexpr bool bUseValidationLayers = true;
 void VulkanEngine::init()
 {
     // only one engine initialization is allowed with the application.
