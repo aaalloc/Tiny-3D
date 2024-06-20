@@ -563,6 +563,13 @@ void VulkanEngine::draw()
     _frameNumber++;
 }
 
+void updateTimeBuffer(VkCommandBuffer cmd, VkBuffer buffer)
+{
+    // update the time buffer
+    float time = SDL_GetTicks() / 1000.0f;
+    vkCmdUpdateBuffer(cmd, buffer, 0, sizeof(float), &time);
+}
+
 void VulkanEngine::draw_background(VkCommandBuffer cmd)
 {
     ComputeEffect &effect = backgroundEffects[currentBackgroundEffect];
@@ -574,8 +581,11 @@ void VulkanEngine::draw_background(VkCommandBuffer cmd)
     vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_COMPUTE, _gradientPipelineLayout, 0, 1, &_drawImageDescriptors,
                             0, nullptr);
 
+    effect.data.time = SDL_GetTicks() / 1000.0f;
+
     vkCmdPushConstants(cmd, _gradientPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(ComputePushConstants),
                        &effect.data);
+
     // execute the compute pipeline dispatch. We are using 16x16 workgroup size so we need to divide by it
     vkCmdDispatch(cmd, std::ceil(_drawExtent.width / 16.0), std::ceil(_drawExtent.height / 16.0), 1);
 }

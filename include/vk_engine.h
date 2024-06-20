@@ -23,6 +23,7 @@ struct ComputePushConstants
     glm::vec4 data2;
     glm::vec4 data3;
     glm::vec4 data4;
+    float time;
 };
 
 struct ComputeEffect
