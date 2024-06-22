@@ -24,6 +24,8 @@ shader_globs = [
     'shaders/gradient.comp',
     'shaders/sky.comp',
     'shaders/gradient_color.comp',
+    'shaders/triangle/colored_triangle.frag',
+    'shaders/triangle/colored_triangle.vert',
 ]
 
 glsl_validator = find_program('glslangValidator', dirs: [

@@ -73,6 +73,13 @@ class VulkanEngine
 
     VmaAllocator _allocator;
 
+    VkPipelineLayout _trianglePipelineLayout;
+    VkPipeline _trianglePipeline;
+
+    void init_triangle_pipeline();
+
+    void draw_geometry(VkCommandBuffer cmd);
+
     // draw resources
 
     bool _isInitialized{false};
