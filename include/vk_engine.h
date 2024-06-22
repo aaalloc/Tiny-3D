@@ -2,6 +2,7 @@
 
 #include <vk_descriptors.h>
 #include <vk_initializers.h>
+#include <vk_loader.h>
 #include <vk_types.h>
 
 // bootstrap library
@@ -57,6 +58,7 @@ class VulkanEngine
     VkExtent2D _swapchainExtent; // Vulkan window surface
 
     AllocatedImage _drawImage;
+    AllocatedImage _depthImage;
     VkExtent2D _drawExtent;
 
     DescriptorAllocator globalDescriptorAllocator;
@@ -73,14 +75,12 @@ class VulkanEngine
 
     VmaAllocator _allocator;
 
-    VkPipelineLayout _trianglePipelineLayout;
-    VkPipeline _trianglePipeline;
-    void init_triangle_pipeline();
-
     VkPipelineLayout _meshPipelineLayout;
     VkPipeline _meshPipeline;
     GPUMeshBuffers rectangle;
     void init_mesh_pipeline();
+
+    std::vector<std::shared_ptr<MeshAsset>> testMeshes;
 
     AllocatedBuffer create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
     void destroy_buffer(const AllocatedBuffer &buffer);

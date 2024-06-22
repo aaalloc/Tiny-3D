@@ -34,4 +34,5 @@ class PipelineBuilder
     void set_depth_format(VkFormat format);
     void disable_blending();
     void disable_depthtest();
+    void enable_depthtest(bool depthWriteEnable, VkCompareOp op);
 };
