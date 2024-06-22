@@ -29,6 +29,13 @@ struct AllocatedImage
     VkFormat imageFormat;
 };
 
+struct AllocatedBuffer
+{
+    VkBuffer buffer;
+    VmaAllocation allocation;
+    VmaAllocationInfo info;
+};
+
 struct DeletionQueue
 {
     std::deque<std::function<void()>> deletors;
@@ -55,6 +62,32 @@ struct FrameData
     VkSemaphore swapchainSemaphore; // for render commands wait on the swapchain image request
     VkSemaphore renderSemaphore;    // control presenting the image to the OS after drawing finish
     VkFence renderFence;            // let us wait for the draw command of a given frame to be finished
+};
+
+struct Vertex
+{
+
+    glm::vec3 position;
+    float uv_x;
+    glm::vec3 normal;
+    float uv_y;
+    glm::vec4 color;
+};
+
+// holds the resources needed for a mesh
+struct GPUMeshBuffers
+{
+
+    AllocatedBuffer indexBuffer;
+    AllocatedBuffer vertexBuffer;
+    VkDeviceAddress vertexBufferAddress;
+};
+
+// push constants for our mesh object draws
+struct GPUDrawPushConstants
+{
+    glm::mat4 worldMatrix;
+    VkDeviceAddress vertexBuffer;
 };
 
 #define VK_CHECK(x)                                                                                                    \
