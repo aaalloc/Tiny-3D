@@ -792,7 +792,7 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
     GPUDrawPushConstants push_constants;
     glm::mat4 view = glm::translate(glm::vec3{0, 0, -5});
     glm::mat4 projection =
-        glm::perspective(glm::radians(70.0f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 100.0f);
+        glm::perspective(glm::radians(70.0f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.0f);
 
     // Invert the Y axis of the projection matrix
     // OpenGL has Y up, Vulkan has Y down
