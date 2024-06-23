@@ -742,6 +742,15 @@ void VulkanEngine::update_scene()
     // }
     mainCamera.update();
 
+    /*
+        // https://learnopengl.com/Getting-started/Camera
+    const float radius = 10.0f;
+    float camX = sin(SDL_GetTicks() / 1000.f) * radius;
+    float camZ = cos(SDL_GetTicks() / 1000.f) * radius;
+    glm::mat4 view;
+    view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
+    */
     glm::mat4 view = mainCamera.getViewMatrix();
     glm::mat4 projection =
         glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 0.1f, 10000.0f);
