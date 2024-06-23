@@ -110,11 +110,12 @@ struct DrawContext
 
 class VulkanEngine
 {
+
+  public:
+    std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedScenes;
     MaterialInstance defaultData;
     GLTFMetallic_Roughness metalRoughMaterial;
     Camera mainCamera;
-
-  public:
     DeletionQueue _mainDeletionQueue;
     FrameData _frames[FRAME_OVERLAP];
     VkInstance _instance;                      // Vulkan library handle

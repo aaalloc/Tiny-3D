@@ -53,6 +53,15 @@ void VulkanEngine::init()
     mainCamera.pitch = 0;
     mainCamera.yaw = 0;
 
+    // mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
+
+    // std::string structurePath = {"../assets/structure.glb"};
+    // auto structureFile = loadGltf(this, structurePath);
+
+    // assert(structureFile.has_value());
+
+    // loadedScenes["structure"] = *structureFile;
+
     // everything went fine
     _isInitialized = true;
 }
@@ -753,6 +762,7 @@ void VulkanEngine::update_scene()
     sceneData.sunlightDirection = glm::vec4(0, 1, 0.5, 1.f);
 
     loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);
+    // loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
 }
 
 void VulkanEngine::init_sync_structures()
@@ -895,6 +905,7 @@ void VulkanEngine::cleanup()
     if (_isInitialized)
     {
         vkDeviceWaitIdle(_device);
+        loadedScenes.clear();
         for (int i = 0; i < FRAME_OVERLAP; i++)
         {
             vkDestroyCommandPool(_device, _frames[i].commandPool, nullptr);
