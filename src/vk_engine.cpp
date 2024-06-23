@@ -53,14 +53,14 @@ void VulkanEngine::init()
     mainCamera.pitch = 0;
     mainCamera.yaw = 0;
 
-    // mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
+    mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
 
-    // std::string structurePath = {"../assets/structure.glb"};
-    // auto structureFile = loadGltf(this, structurePath);
+    std::string structurePath = {"../assets/structure.glb"};
+    auto structureFile = loadGltf(this, structurePath);
 
-    // assert(structureFile.has_value());
+    assert(structureFile.has_value());
 
-    // loadedScenes["structure"] = *structureFile;
+    loadedScenes["structure"] = *structureFile;
 
     // everything went fine
     _isInitialized = true;
@@ -622,6 +622,7 @@ void VulkanEngine::init_swapchain()
     // build a image-view for the draw image to use for rendering
     VkImageViewCreateInfo dview_info =
         vkinit::imageview_create_info(_depthImage.imageFormat, _depthImage.image, VK_IMAGE_ASPECT_DEPTH_BIT);
+
     VK_CHECK(vkCreateImageView(_device, &dview_info, nullptr, &_depthImage.imageView));
 
     _mainDeletionQueue.push_function(
@@ -731,6 +732,7 @@ void VulkanEngine::init_commands()
 void VulkanEngine::update_scene()
 {
     mainDrawContext.OpaqueSurfaces.clear();
+    mainDrawContext.TransparentSurfaces.clear();
 
     // for (int x = -3; x < 3; x++)
     // {
@@ -753,7 +755,7 @@ void VulkanEngine::update_scene()
     */
     glm::mat4 view = mainCamera.getViewMatrix();
     glm::mat4 projection =
-        glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 0.1f, 10000.0f);
+        glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.0f, 0.1f);
 
     // Invert the Y axis of the projection matrix
     // OpenGL has Y up, Vulkan has Y down
@@ -771,7 +773,7 @@ void VulkanEngine::update_scene()
     sceneData.sunlightDirection = glm::vec4(0, 1, 0.5, 1.f);
 
     loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);
-    // loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
+    loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
 }
 
 void VulkanEngine::init_sync_structures()
@@ -1108,9 +1110,8 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
     writer.write_buffer(0, gpuSceneDataBuffer.buffer, sizeof(GPUSceneData), 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
     writer.update_set(_device, globalDescriptor);
 
-    for (const RenderObject &draw : mainDrawContext.OpaqueSurfaces)
+    auto draw = [&](const RenderObject &draw)
     {
-
         vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, draw.material->pipeline->pipeline);
         vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, draw.material->pipeline->layout, 0, 1,
                                 &globalDescriptor, 0, nullptr);
@@ -1126,6 +1127,16 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
                            sizeof(GPUDrawPushConstants), &pushConstants);
 
         vkCmdDrawIndexed(cmd, draw.indexCount, 1, draw.firstIndex, 0, 0);
+    };
+
+    for (auto &r : mainDrawContext.OpaqueSurfaces)
+    {
+        draw(r);
+    }
+
+    for (auto &r : mainDrawContext.TransparentSurfaces)
+    {
+        draw(r);
     }
 
     vkCmdEndRendering(cmd);

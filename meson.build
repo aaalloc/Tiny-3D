@@ -3,6 +3,8 @@ project('vulkan_guide',
     default_options: ['default_library=static', 'warning_level=2'],
 )
 
+add_project_arguments(['-DGLM_FORCE_DEPTH_ZERO_TO_ONE'], language: 'cpp')
+
 fs = import('fs') 
 
 subproject('vkbootstrap')
