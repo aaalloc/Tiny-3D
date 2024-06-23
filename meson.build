@@ -27,6 +27,7 @@ shader_globs = [
     'shaders/triangle/colored_triangle.frag',
     'shaders/triangle/colored_triangle.vert',
     'shaders/triangle/colored_triangle_mesh.vert',
+    'shaders/tex_image.frag',
 ]
 
 glsl_validator = find_program('glslangValidator', dirs: [

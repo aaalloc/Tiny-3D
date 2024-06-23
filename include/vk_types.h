@@ -54,16 +54,6 @@ struct DeletionQueue
     }
 };
 
-struct FrameData
-{
-    DeletionQueue deletionQueue;
-    VkCommandPool commandPool;
-    VkCommandBuffer mainCommandBuffer;
-    VkSemaphore swapchainSemaphore; // for render commands wait on the swapchain image request
-    VkSemaphore renderSemaphore;    // control presenting the image to the OS after drawing finish
-    VkFence renderFence;            // let us wait for the draw command of a given frame to be finished
-};
-
 struct Vertex
 {
 
@@ -88,6 +78,16 @@ struct GPUDrawPushConstants
 {
     glm::mat4 worldMatrix;
     VkDeviceAddress vertexBuffer;
+};
+
+struct GPUSceneData
+{
+    glm::mat4 view;
+    glm::mat4 proj;
+    glm::mat4 viewproj;
+    glm::vec4 ambientColor;
+    glm::vec4 sunlightDirection; // w for sun power
+    glm::vec4 sunlightColor;
 };
 
 #define VK_CHECK(x)                                                                                                    \

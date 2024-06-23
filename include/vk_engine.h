@@ -37,6 +37,17 @@ struct ComputeEffect
     ComputePushConstants data;
 };
 
+struct FrameData
+{
+    VkSemaphore swapchainSemaphore; // for render commands wait on the swapchain image request
+    VkSemaphore renderSemaphore;    // control presenting the image to the OS after drawing finish
+    VkFence renderFence;            // let us wait for the draw command of a given frame to be finished
+    VkCommandPool commandPool;
+    VkCommandBuffer mainCommandBuffer;
+    DeletionQueue deletionQueue;
+    DescriptorAllocatorGrowable frameDescriptors;
+};
+
 class VulkanEngine
 {
   public:
@@ -88,6 +99,23 @@ class VulkanEngine
 
     void draw_geometry(VkCommandBuffer cmd);
     void init_default_data();
+
+    VkDescriptorSetLayout _singleImageDescriptorLayout;
+    GPUSceneData sceneData;
+    VkDescriptorSetLayout _gpuSceneDataDescriptorLayout;
+
+    AllocatedImage _whiteImage;
+    AllocatedImage _blackImage;
+    AllocatedImage _greyImage;
+    AllocatedImage _errorCheckerboardImage;
+
+    VkSampler _defaultSamplerLinear;
+    VkSampler _defaultSamplerNearest;
+
+    AllocatedImage create_image(VkExtent3D size, VkFormat format, VkImageUsageFlags usage, bool mipmapped = false);
+    AllocatedImage create_image(void *data, VkExtent3D size, VkFormat format, VkImageUsageFlags usage,
+                                bool mipmapped = false);
+    void destroy_image(const AllocatedImage &img);
 
     // draw resources
 
