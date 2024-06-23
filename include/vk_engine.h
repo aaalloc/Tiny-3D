@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "camera.h"
 #include <vk_descriptors.h>
 #include <vk_initializers.h>
 #include <vk_loader.h>
@@ -111,6 +112,7 @@ class VulkanEngine
 {
     MaterialInstance defaultData;
     GLTFMetallic_Roughness metalRoughMaterial;
+    Camera mainCamera;
 
   public:
     DeletionQueue _mainDeletionQueue;

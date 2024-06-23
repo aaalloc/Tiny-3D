@@ -47,6 +47,12 @@ void VulkanEngine::init()
     init_imgui();
     init_default_data();
 
+    mainCamera.velocity = glm::vec3(0.f);
+    mainCamera.position = glm::vec3(0, 0, 5);
+
+    mainCamera.pitch = 0;
+    mainCamera.yaw = 0;
+
     // everything went fine
     _isInitialized = true;
 }
@@ -717,8 +723,6 @@ void VulkanEngine::update_scene()
 {
     mainDrawContext.OpaqueSurfaces.clear();
 
-    loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);
-
     // for (int x = -3; x < 3; x++)
     // {
     //
@@ -727,23 +731,28 @@ void VulkanEngine::update_scene()
     //
     // loadedNodes["Cube"]->Draw(translation * scale, mainDrawContext);
     // }
+    mainCamera.update();
 
-    sceneData.view = glm::translate(glm::vec3{0, 0, -5});
-    // camera projection
-    sceneData.proj =
-        glm::perspective(glm::radians(70.0f), (float)_drawExtent.width / (float)_drawExtent.height, 0.1f, 10000.0f);
+    glm::mat4 view = mainCamera.getViewMatrix();
+    glm::mat4 projection =
+        glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 0.1f, 10000.0f);
 
     // Invert the Y axis of the projection matrix
     // OpenGL has Y up, Vulkan has Y down
-    sceneData.proj[1][1] *= -1;
+    projection[1][1] *= -1;
     // flip the Z axis so it look at us
-    sceneData.view[2][2] *= -1;
-    sceneData.viewproj = sceneData.proj * sceneData.view;
+    view[2][2] *= -1;
+
+    sceneData.proj = projection;
+    sceneData.view = view;
+    sceneData.viewproj = projection * view;
 
     // some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
     sceneData.sunlightColor = glm::vec4(1.5f);
     sceneData.sunlightDirection = glm::vec4(0, 1, 0.5, 1.f);
+
+    loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);
 }
 
 void VulkanEngine::init_sync_structures()
@@ -1262,21 +1271,14 @@ void VulkanEngine::run()
             if (e.type == SDL_WINDOWEVENT)
             {
                 if (e.window.event == SDL_WINDOWEVENT_MINIMIZED)
-                {
                     stop_rendering = true;
-                }
                 if (e.window.event == SDL_WINDOWEVENT_RESTORED)
-                {
                     stop_rendering = false;
-                }
             }
-            if (e.type == SDL_KEYDOWN)
-            {
-                if (e.key.keysym.sym == SDLK_ESCAPE)
-                {
-                    bQuit = true;
-                }
-            }
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
+                bQuit = true;
+
+            mainCamera.processSDLEvent(e);
             ImGui_ImplSDL2_ProcessEvent(&e);
         }
 
