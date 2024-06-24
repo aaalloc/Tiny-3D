@@ -98,6 +98,7 @@ struct RenderObject
     VkBuffer indexBuffer;
 
     MaterialInstance *material;
+    Bounds bounds;
 
     glm::mat4 transform;
     VkDeviceAddress vertexBufferAddress;
@@ -109,10 +110,20 @@ struct DrawContext
     std::vector<RenderObject> TransparentSurfaces;
 };
 
+struct EngineStats
+{
+    float frametime;
+    int triangle_count;
+    int drawcall_count;
+    float scene_update_time;
+    float mesh_draw_time;
+};
+
 class VulkanEngine
 {
 
   public:
+    EngineStats stats;
     std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedScenes;
     MaterialInstance defaultData;
     GLTFMetallic_Roughness metalRoughMaterial;
