@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include "vk_types.h"
 
+class VulkanEngine;
 namespace vkutil
 {
 bool load_shader_module(const char *filePath, VkDevice device, VkShaderModule *outShaderModule);
-};
+void init_background_pipelines(VulkanEngine &engine);
+}; // namespace vkutil
 
 class PipelineBuilder
 {

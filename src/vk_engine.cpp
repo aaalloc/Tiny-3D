@@ -23,7 +23,7 @@ VulkanEngine *loadedEngine = nullptr;
 
 VulkanEngine &VulkanEngine::Get() { return *loadedEngine; }
 
-constexpr bool bUseValidationLayers = false;
+constexpr bool bUseValidationLayers = true;
 
 bool is_visible(const RenderObject &obj, const glm::mat4 &viewproj)
 {
@@ -109,7 +109,7 @@ void VulkanEngine::init()
 void VulkanEngine::init_pipelines()
 {
     // COMPUTE PIPELINES
-    init_background_pipelines();
+    vkutil::init_background_pipelines(*this);
 
     // GRAPHICS PIPELINES
     init_mesh_pipeline();
@@ -239,89 +239,6 @@ void MeshNode::Draw(const glm::mat4 &topMatrix, DrawContext &ctx)
 
     // recurse down
     Node::Draw(topMatrix, ctx);
-}
-
-void VulkanEngine::init_background_pipelines()
-{
-    VkPipelineLayoutCreateInfo computeLayout{};
-    computeLayout.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    computeLayout.pNext = nullptr;
-    computeLayout.pSetLayouts = &_drawImageDescriptorLayout;
-    computeLayout.setLayoutCount = 1;
-
-    VkPushConstantRange pushConstant{};
-    pushConstant.offset = 0;
-    pushConstant.size = sizeof(ComputePushConstants);
-    pushConstant.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
-
-    computeLayout.pPushConstantRanges = &pushConstant;
-    computeLayout.pushConstantRangeCount = 1;
-
-    VK_CHECK(vkCreatePipelineLayout(_device, &computeLayout, nullptr, &_gradientPipelineLayout));
-
-    VkShaderModule gradientShader;
-    if (!vkutil::load_shader_module("gradient_color.comp.spv", _device, &gradientShader))
-    {
-        fmt::print("Error when building the compute shader \n");
-    }
-
-    VkShaderModule skyShader;
-    if (!vkutil::load_shader_module("sky.comp.spv", _device, &skyShader))
-    {
-        fmt::print("Error when building the compute shader \n");
-    }
-
-    VkPipelineShaderStageCreateInfo stageinfo{};
-    stageinfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    stageinfo.pNext = nullptr;
-    stageinfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    stageinfo.module = gradientShader;
-    stageinfo.pName = "main";
-
-    VkComputePipelineCreateInfo computePipelineCreateInfo{};
-    computePipelineCreateInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-    computePipelineCreateInfo.pNext = nullptr;
-    computePipelineCreateInfo.layout = _gradientPipelineLayout;
-    computePipelineCreateInfo.stage = stageinfo;
-
-    ComputeEffect gradient;
-    gradient.layout = _gradientPipelineLayout;
-    gradient.name = "gradient";
-    gradient.data = {};
-
-    // default colors
-    gradient.data.data1 = glm::vec4(1, 0, 0, 1);
-    gradient.data.data2 = glm::vec4(0, 0, 1, 1);
-
-    VK_CHECK(
-        vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &computePipelineCreateInfo, nullptr, &gradient.pipeline));
-
-    // change the shader module only to create the sky shader
-    computePipelineCreateInfo.stage.module = skyShader;
-
-    ComputeEffect sky;
-    sky.layout = _gradientPipelineLayout;
-    sky.name = "sky";
-    sky.data = {};
-    // default sky parameters
-    sky.data.data1 = glm::vec4(0.1, 0.2, 0.4, 0.97);
-
-    VK_CHECK(vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &computePipelineCreateInfo, nullptr, &sky.pipeline));
-
-    // add the 2 background effects into the array
-    backgroundEffects.push_back(gradient);
-    backgroundEffects.push_back(sky);
-
-    // destroy structures properly
-    vkDestroyShaderModule(_device, gradientShader, nullptr);
-    vkDestroyShaderModule(_device, skyShader, nullptr);
-    _mainDeletionQueue.push_function(
-        [=, this]()
-        {
-            vkDestroyPipelineLayout(_device, _gradientPipelineLayout, nullptr);
-            vkDestroyPipeline(_device, sky.pipeline, nullptr);
-            vkDestroyPipeline(_device, gradient.pipeline, nullptr);
-        });
 }
 
 AllocatedBuffer VulkanEngine::create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
