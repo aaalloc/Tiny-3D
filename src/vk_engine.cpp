@@ -112,7 +112,7 @@ void VulkanEngine::init_pipelines()
     vkutil::init_background_pipelines(*this);
 
     // GRAPHICS PIPELINES
-    init_mesh_pipeline();
+    vkutil::init_mesh_pipeline(*this);
     metalRoughMaterial.build_pipelines(this);
 }
 
@@ -321,80 +321,6 @@ GPUMeshBuffers VulkanEngine::uploadMesh(std::span<uint32_t> indices, std::span<V
     destroy_buffer(staging);
 
     return newSurface;
-}
-
-void VulkanEngine::init_mesh_pipeline()
-{
-    VkShaderModule triangleFragShader;
-    if (!vkutil::load_shader_module("tex_image.frag.spv", _device, &triangleFragShader))
-    {
-        fmt::print("Error when building the triangle fragment shader module\n");
-    }
-    else
-    {
-        fmt::print("Triangle fragment shader succesfully loaded\n");
-    }
-
-    VkShaderModule triangleVertexShader;
-    if (!vkutil::load_shader_module("colored_triangle_mesh.vert.spv", _device, &triangleVertexShader))
-    {
-        fmt::print("Error when building the triangle vertex shader module\n");
-    }
-    else
-    {
-        fmt::print("Triangle vertex shader succesfully loaded\n");
-    }
-
-    VkPushConstantRange bufferRange{};
-    bufferRange.offset = 0;
-    bufferRange.size = sizeof(GPUDrawPushConstants);
-    bufferRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-    VkPipelineLayoutCreateInfo pipeline_layout_info = vkinit::pipeline_layout_create_info();
-    pipeline_layout_info.pPushConstantRanges = &bufferRange;
-    pipeline_layout_info.pushConstantRangeCount = 1;
-    pipeline_layout_info.pSetLayouts = &_singleImageDescriptorLayout;
-    pipeline_layout_info.setLayoutCount = 1;
-    VK_CHECK(vkCreatePipelineLayout(_device, &pipeline_layout_info, nullptr, &_meshPipelineLayout));
-
-    PipelineBuilder pipelineBuilder;
-
-    // use the triangle layout we created
-    pipelineBuilder._pipelineLayout = _meshPipelineLayout;
-    // connecting the vertex and pixel shaders to the pipeline
-    pipelineBuilder.set_shaders(triangleVertexShader, triangleFragShader);
-    // it will draw triangles
-    pipelineBuilder.set_input_topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    // filled triangles
-    pipelineBuilder.set_polygon_mode(VK_POLYGON_MODE_FILL);
-    // no backface culling
-    pipelineBuilder.set_cull_mode(VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE);
-    // no multisampling
-    pipelineBuilder.set_multisampling_none();
-    // no blending
-    pipelineBuilder.disable_blending();
-    // pipelineBuilder.enable_blending_additive();
-
-    // pipelineBuilder.disable_depthtest();
-    pipelineBuilder.enable_depthtest(true, VK_COMPARE_OP_GREATER_OR_EQUAL);
-
-    // connect the image format we will draw into, from draw image
-    pipelineBuilder.set_color_attachment_format(_drawImage.imageFormat);
-    pipelineBuilder.set_depth_format(_depthImage.imageFormat);
-
-    // finally build the pipeline
-    _meshPipeline = pipelineBuilder.build_pipeline(_device);
-
-    // clean structures
-    vkDestroyShaderModule(_device, triangleFragShader, nullptr);
-    vkDestroyShaderModule(_device, triangleVertexShader, nullptr);
-
-    _mainDeletionQueue.push_function(
-        [&]()
-        {
-            vkDestroyPipelineLayout(_device, _meshPipelineLayout, nullptr);
-            vkDestroyPipeline(_device, _meshPipeline, nullptr);
-        });
 }
 
 void VulkanEngine::init_vulkan()

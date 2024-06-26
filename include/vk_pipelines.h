@@ -6,6 +6,7 @@ namespace vkutil
 {
 bool load_shader_module(const char *filePath, VkDevice device, VkShaderModule *outShaderModule);
 void init_background_pipelines(VulkanEngine &engine);
+void init_mesh_pipeline(VulkanEngine &engine);
 }; // namespace vkutil
 
 class PipelineBuilder

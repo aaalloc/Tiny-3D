@@ -166,7 +166,6 @@ class VulkanEngine
     VkPipelineLayout _meshPipelineLayout;
     VkPipeline _meshPipeline;
     GPUMeshBuffers rectangle;
-    void init_mesh_pipeline();
 
     std::vector<std::shared_ptr<MeshAsset>> testMeshes;
 
