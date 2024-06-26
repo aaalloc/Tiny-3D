@@ -16,6 +16,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <vk_images.h>
 
 VkFilter extract_filter(fastgltf::Filter filter)
 {
@@ -221,7 +222,7 @@ std::optional<AllocatedImage> load_image(VulkanEngine *engine, fastgltf::Asset &
                     imagesize.height = height;
                     imagesize.depth = 1;
 
-                    newImage = engine->create_image(data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
+                    newImage = vkutil::create_image(*engine, data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
                                                     VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
                     stbi_image_free(data);
@@ -239,7 +240,7 @@ std::optional<AllocatedImage> load_image(VulkanEngine *engine, fastgltf::Asset &
                     imagesize.height = height;
                     imagesize.depth = 1;
 
-                    newImage = engine->create_image(data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
+                    newImage = vkutil::create_image(*engine, data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
                                                     VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
                     stbi_image_free(data);
@@ -270,7 +271,7 @@ std::optional<AllocatedImage> load_image(VulkanEngine *engine, fastgltf::Asset &
                                 imagesize.height = height;
                                 imagesize.depth = 1;
 
-                                newImage = engine->create_image(data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
+                                newImage = vkutil::create_image(*engine, data, imagesize, VK_FORMAT_R8G8B8A8_UNORM,
                                                                 VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
                                 stbi_image_free(data);
@@ -665,7 +666,7 @@ void LoadedGLTF::clearAll()
             // dont destroy the default images
             continue;
         }
-        creator->destroy_image(v);
+        vkutil::destroy_image(*creator, v);
     }
 
     for (auto &sampler : samplers)
