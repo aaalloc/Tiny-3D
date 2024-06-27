@@ -306,8 +306,7 @@ std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanEngine *engine, std::s
     fastgltf::Parser parser{};
 
     constexpr auto gltfOptions = fastgltf::Options::DontRequireValidAssetMember | fastgltf::Options::AllowDouble |
-                                 fastgltf::Options::LoadGLBBuffers | fastgltf::Options::LoadExternalBuffers;
-    // fastgltf::Options::LoadExternalImages;
+                                 fastgltf::Options::LoadExternalBuffers;
 
     auto data = fastgltf::GltfDataBuffer::FromPath(filePath);
     if (data.error() != fastgltf::Error::None)
@@ -563,7 +562,7 @@ std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanEngine *engine, std::s
             // loop the vertices of this surface, find min/max bounds
             glm::vec3 minpos = vertices[initial_vtx].position;
             glm::vec3 maxpos = vertices[initial_vtx].position;
-            for (int i = initial_vtx; i < vertices.size(); i++)
+            for (size_t i = initial_vtx; i < vertices.size(); i++)
             {
                 minpos = glm::min(minpos, vertices[i].position);
                 maxpos = glm::max(maxpos, vertices[i].position);
@@ -620,7 +619,7 @@ std::optional<std::shared_ptr<LoadedGLTF>> loadGltf(VulkanEngine *engine, std::s
     }
 
     // run loop again to setup transform hierarchy
-    for (int i = 0; i < gltf.nodes.size(); i++)
+    for (size_t i = 0; i < gltf.nodes.size(); i++)
     {
         fastgltf::Node &node = gltf.nodes[i];
         std::shared_ptr<Node> &sceneNode = nodes[i];
