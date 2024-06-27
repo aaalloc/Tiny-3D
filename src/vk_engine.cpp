@@ -488,7 +488,7 @@ void VulkanEngine::init_swapchain()
     VK_CHECK(vkCreateImageView(_device, &dview_info, nullptr, &_depthImage.imageView));
 
     _mainDeletionQueue.push_function(
-        [=]()
+        [=, this]()
         {
             vkDestroyImageView(_device, _drawImage.imageView, nullptr);
             vmaDestroyImage(_allocator, _drawImage.image, _drawImage.allocation);
@@ -552,7 +552,7 @@ void VulkanEngine::init_descriptors()
             vkDestroyDescriptorSetLayout(_device, _gpuSceneDataDescriptorLayout, nullptr);
             vkDestroyDescriptorSetLayout(_device, _singleImageDescriptorLayout, nullptr);
         });
-    for (int i = 0; i < FRAME_OVERLAP; i++)
+    for (size_t i = 0; i < FRAME_OVERLAP; i++)
     {
         // create a descriptor pool
         std::vector<DescriptorAllocatorGrowable::PoolSizeRatio> frame_sizes = {
@@ -577,7 +577,7 @@ void VulkanEngine::init_commands()
     commandPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     commandPoolInfo.queueFamilyIndex = _graphicsQueueFamily;
 
-    for (int i = 0; i < FRAME_OVERLAP; i++)
+    for (size_t i = 0; i < FRAME_OVERLAP; i++)
     {
         VK_CHECK(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &_frames[i].commandPool));
         VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_frames[i].commandPool, 1);
@@ -631,14 +631,17 @@ void VulkanEngine::update_scene()
     sceneData.sunlightColor = glm::vec4(1.5f);
     sceneData.sunlightDirection = glm::vec4(0, 1, 0.5, 1.f);
 
-    loadedNodes["Suzanne"]->Draw(glm::mat4{1.f}, mainDrawContext);
+    // make fulle rotation every 10 seconds
+    float rotation = (SDL_GetTicks64() / 10000.f) * glm::radians(50.0f) * 5.f;
+
+    loadedNodes["Suzanne"]->Draw(glm::rotate(rotation, glm::vec3(0.5f, 1.0f, 0.0f)), mainDrawContext);
     loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
 
     auto end = std::chrono::system_clock::now();
 
     // convert to microseconds (integer), and then come back to miliseconds
     auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    stats.mesh_draw_time = elapsed.count() / 1000.f;
+    stats.scene_update_time = elapsed.count() / 1000.f;
 }
 
 void VulkanEngine::init_sync_structures()
@@ -649,7 +652,7 @@ void VulkanEngine::init_sync_structures()
     VkFenceCreateInfo fenceCreateInfo = vkinit::fence_create_info(VK_FENCE_CREATE_SIGNALED_BIT);
     VkSemaphoreCreateInfo semaphoreCreateInfo = vkinit::semaphore_create_info();
 
-    for (int i = 0; i < FRAME_OVERLAP; i++)
+    for (size_t i = 0; i < FRAME_OVERLAP; i++)
     {
         VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_frames[i].renderFence));
 
@@ -697,7 +700,7 @@ void VulkanEngine::cleanup()
     {
         vkDeviceWaitIdle(_device);
         loadedScenes.clear();
-        for (int i = 0; i < FRAME_OVERLAP; i++)
+        for (size_t i = 0; i < FRAME_OVERLAP; i++)
         {
             vkDestroyCommandPool(_device, _frames[i].commandPool, nullptr);
 
@@ -845,7 +848,7 @@ void VulkanEngine::draw_geometry(VkCommandBuffer cmd)
     std::vector<uint32_t> opaque_draws;
     opaque_draws.reserve(mainDrawContext.OpaqueSurfaces.size());
 
-    for (int i = 0; i < mainDrawContext.OpaqueSurfaces.size(); i++)
+    for (size_t i = 0; i < mainDrawContext.OpaqueSurfaces.size(); i++)
     {
         if (is_visible(mainDrawContext.OpaqueSurfaces[i], sceneData.viewproj))
         {
@@ -1189,21 +1192,21 @@ void VulkanEngine::run()
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        if (ImGui::Begin("background"))
-        {
+        // if (ImGui::Begin("background"))
+        // {
 
-            ComputeEffect &selected = backgroundEffects[currentBackgroundEffect];
+        //     ComputeEffect &selected = backgroundEffects[currentBackgroundEffect];
 
-            ImGui::Text("Selected effect: ", selected.name);
+        //     ImGui::Text("Selected effect: %s", selected.name);
 
-            ImGui::SliderInt("Effect Index", &currentBackgroundEffect, 0, backgroundEffects.size() - 1);
+        //     ImGui::SliderInt("Effect Index", &currentBackgroundEffect, 0, backgroundEffects.size() - 1);
 
-            ImGui::InputFloat4("data1", (float *)&selected.data.data1);
-            ImGui::InputFloat4("data2", (float *)&selected.data.data2);
-            ImGui::InputFloat4("data3", (float *)&selected.data.data3);
-            ImGui::InputFloat4("data4", (float *)&selected.data.data4);
-        }
-        ImGui::End();
+        //     ImGui::InputFloat4("data1", (float *)&selected.data.data1);
+        //     ImGui::InputFloat4("data2", (float *)&selected.data.data2);
+        //     ImGui::InputFloat4("data3", (float *)&selected.data.data3);
+        //     ImGui::InputFloat4("data4", (float *)&selected.data.data4);
+        // }
+        // ImGui::End();
 
         ImGui::Begin("Stats");
         ImGui::Text("frametime %f ms", stats.frametime);
