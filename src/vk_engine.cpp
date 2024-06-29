@@ -76,8 +76,6 @@ void VulkanEngine::init()
     _window = SDL_CreateWindow("Vulkan Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _windowExtent.width,
                                _windowExtent.height, window_flags);
 
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-
     init_vulkan();
     init_swapchain();
     init_commands();
@@ -97,13 +95,18 @@ void VulkanEngine::init()
 
     std::string structurePath = {"../assets/structure.glb"};
     auto structureFile = loadGltf(this, structurePath);
-
     assert(structureFile.has_value());
-
     loadedScenes["structure"] = *structureFile;
+
+    // auto helmetFile = loadGltf(this, "../assets/DamagedHelmet.gltf");
+    // assert(helmetFile.has_value());
+    // loadedScenes["helmet"] = *helmetFile;
+    // std::cout << "Helmet loaded" << std::endl;
 
     // everything went fine
     _isInitialized = true;
+    sceneData.lightPosition = glm::vec4(62.f, -35.f, -28.f, 1.0f);
+    sceneData.lightPower = 1.0f;
 }
 
 void VulkanEngine::init_pipelines()
@@ -607,13 +610,6 @@ void VulkanEngine::update_scene()
     // }
     mainCamera.update();
 
-    // // https: // learnopengl.com/Getting-started/Camera
-    // const float radius = 10.0f;
-    // float camX = sin(SDL_GetTicks64() / 1000.f) * radius;
-    // float camZ = cos(SDL_GetTicks64() / 1000.f) * radius;
-    // glm::mat4 view;
-    // view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
     glm::mat4 view = mainCamera.getViewMatrix();
     glm::mat4 projection =
         glm::perspective(glm::radians(70.f), (float)_windowExtent.width / (float)_windowExtent.height, 10000.0f, 0.1f);
@@ -629,12 +625,13 @@ void VulkanEngine::update_scene()
     // some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
     sceneData.sunlightColor = glm::vec4(1.5f);
-    sceneData.sunlightDirection = glm::vec4(0, 1, 0.5, 1.f);
+    sceneData.sunlightDirection = glm::vec4(0, 0, 0, 0.f);
 
     // make fulle rotation every 10 seconds
     float rotation = (SDL_GetTicks64() / 10000.f) * glm::radians(50.0f) * 5.f;
 
     loadedNodes["Suzanne"]->Draw(glm::rotate(rotation, glm::vec3(0.5f, 1.0f, 0.0f)), mainDrawContext);
+    // loadedScenes["helmet"]->Draw(glm::rotate(rotation, glm::vec3(0.5f, 1.0f, 0.0f)), mainDrawContext);
     loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
 
     auto end = std::chrono::system_clock::now();
@@ -1152,6 +1149,7 @@ void VulkanEngine::run()
 {
     SDL_Event e;
     bool bQuit = false;
+    bool cameraMode = true;
 
     // main loop
     while (!bQuit)
@@ -1174,8 +1172,17 @@ void VulkanEngine::run()
             }
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
                 bQuit = true;
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE)
+            {
+                cameraMode = !cameraMode;
+                if (cameraMode)
+                    SDL_SetRelativeMouseMode(SDL_TRUE);
+                else
+                    SDL_SetRelativeMouseMode(SDL_FALSE);
+            }
 
-            mainCamera.processSDLEvent(e);
+            if (cameraMode)
+                mainCamera.processSDLEvent(e);
             ImGui_ImplSDL2_ProcessEvent(&e);
         }
 
@@ -1214,6 +1221,14 @@ void VulkanEngine::run()
         ImGui::Text("update time %f ms", stats.scene_update_time);
         ImGui::Text("triangles %i", stats.triangle_count);
         ImGui::Text("draws %i", stats.drawcall_count);
+        ImGui::End();
+
+        // control sceneData.lightPosition
+        ImGui::Begin("Light Control");
+        ImGui::SliderFloat("X", &sceneData.lightPosition.x, -100, 100);
+        ImGui::SliderFloat("Y", &sceneData.lightPosition.y, -100, 100);
+        ImGui::SliderFloat("Z", &sceneData.lightPosition.z, -100, 100);
+        ImGui::SliderFloat("Light strength", &sceneData.lightPower, 1, 100);
         ImGui::End();
 
         ImGui::Render();
