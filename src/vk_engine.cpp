@@ -1228,7 +1228,7 @@ void VulkanEngine::run()
         ImGui::SliderFloat("X", &sceneData.lights[0].position.x, -100, 100);
         ImGui::SliderFloat("Y", &sceneData.lights[0].position.y, -100, 100);
         ImGui::SliderFloat("Z", &sceneData.lights[0].position.z, -100, 100);
-        ImGui::SliderFloat("Light strength", &sceneData.lights[0].power, 1, 100);
+        ImGui::SliderFloat("Light strength", &sceneData.lights[0].power, 0, 3);
         ImGui::End();
 
         ImGui::Render();
