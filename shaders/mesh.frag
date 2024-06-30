@@ -15,25 +15,22 @@ vec3 lightColor = vec3(1.0f);
 vec3 calcPointLight(Light light, vec3 inFragPos, vec3 inNormal)
 {
     vec3 lightDir = normalize(light.position.xyz - inFragPos);
-    float diff = max(dot(lightDir, inNormal), 0.0f) * light.power;
+    float diff = max(dot(lightDir, inNormal), 0.0f);
 
-    // vec3 viewDir = normalize(sceneData.cameraPosition - inFragPos);
-    // vec3 reflectDir = reflect(viewDir, inNormal);
+    vec3 viewDir = normalize(sceneData.cameraPosition.xyz - inFragPos);
+    vec3 reflectDir = reflect(viewDir, inNormal);
 
-    // float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32.0f);
-    // vec3 specular = specularStrength * spec * lightColor;
-
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32.0f);
+    vec3 specular = specularStrength * spec * lightColor;
     vec3 ambient = sceneData.ambientColor.xyz;
 
-    return (ambient + diff);
+    // specular needs some work, so it is not used for now
+    return (ambient + diff) * light.power;
 }
 
 void main()
 {
-    float lightValue =
-        max(dot(inNormal, sceneData.sunlightDirection.xyz), 0.1f);
     vec3 result = calcPointLight(sceneData.lights[0], inFragPos, inNormal);
     vec3 color = inColor * texture(colorTex, inUV).xyz;
-    outFragColor =
-        vec4(result * color * lightValue * sceneData.sunlightColor.w, 1.0f);
+    outFragColor = vec4(result * color, 1.0f);
 }

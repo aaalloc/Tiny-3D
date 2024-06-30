@@ -624,7 +624,7 @@ void VulkanEngine::update_scene()
 
     // some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
-    sceneData.sunlightColor = glm::vec4(1.5f);
+    sceneData.cameraPosition = glm::vec4(mainCamera.position, 1.0f);
     sceneData.sunlightDirection = glm::vec4(0, 0, 0, 0.f);
 
     // make fulle rotation every 10 seconds
