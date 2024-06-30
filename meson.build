@@ -1,7 +1,10 @@
 project('vulkan_guide', 
     'cpp', 
-    default_options: ['default_library=static']
+    default_options: ['default_library=static', 'warning_level=2'],
 )
+
+add_project_arguments(['-DGLM_FORCE_DEPTH_ZERO_TO_ONE'], language: 'cpp')
+
 fs = import('fs') 
 
 subproject('vkbootstrap')
@@ -15,17 +18,21 @@ project_dependencies = [
     dependency('stb_image'),
     dependency('vkbootstrap'),
     dependency('vma'),
+    dependency('imgui'),
 ]
-
-
-bin_dir = meson.current_source_dir() / 'bin'
-
 
 shader_src = meson.current_source_dir() / 'shaders'
 shader_globs = [
     'shaders/gradient.comp',
     'shaders/sky.comp',
     'shaders/gradient_color.comp',
+    'shaders/triangle/colored_triangle.frag',
+    'shaders/triangle/colored_triangle.vert',
+    'shaders/triangle/colored_triangle_mesh.vert',
+    'shaders/tex_image.frag',
+    'shaders/mesh.vert',
+    'shaders/mesh.frag',
+
 ]
 
 glsl_validator = find_program('glslangValidator', dirs: [
@@ -62,8 +69,6 @@ custom_target(
 )
 
 
-subproject('imgui')
-
 executable(
     'engine',
     [
@@ -82,4 +87,5 @@ executable(
     ],
     dependencies: project_dependencies,
     cpp_pch: 'pch/vk_render.h',
+    cpp_args: ['-Wno-missing-field-initializers', '-Wno-missing-braces', '-Wno-unused-parameter']
 )

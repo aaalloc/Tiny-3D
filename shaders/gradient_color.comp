@@ -1,32 +1,44 @@
+
 #version 460
 
-layout (local_size_x = 16, local_size_y = 16) in;
+layout(local_size_x = 16, local_size_y = 16) in;
 
-layout(rgba16f,set = 0, binding = 0) uniform image2D image;
+layout(rgba16f, set = 0, binding = 0) uniform image2D image;
 
-//push constants block
-layout( push_constant ) uniform constants
+// push constants block
+layout(push_constant) uniform constants
 {
- vec4 data1;
- vec4 data2;
- vec4 data3;
- vec4 data4;
-} PushConstants;
+    vec4 data1;
+    vec4 data2;
+    vec4 data3;
+    vec4 data4;
+    float time;
+}
+PushConstants;
 
-void main() 
+vec3 rotate(ivec2 texelCoord)
+{
+    vec2 uv = vec2(texelCoord) / vec2(imageSize(image));
+    uv = uv * 2.0 - 1.0; // Transform coordinates to range [-1, 1]
+    float angle = atan(uv.y, uv.x) + PushConstants.time;
+    return 0.5 + 0.5 * cos(PushConstants.time + angle + vec3(0, 2, 4));
+}
+
+void main()
 {
     ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
-
-	ivec2 size = imageSize(image);
+    ivec2 size = imageSize(image);
 
     vec4 topColor = PushConstants.data1;
     vec4 bottomColor = PushConstants.data2;
 
-    if(texelCoord.x < size.x && texelCoord.y < size.y)
+    // Time varying pixel color
+
+    if (texelCoord.x < size.x && texelCoord.y < size.y)
     {
-        float blend = float(texelCoord.y)/(size.y); 
-    
-        imageStore(image, texelCoord, mix(topColor,bottomColor, blend));
+        vec3 col = rotate(texelCoord);
+
+        float blend = float(texelCoord.y) / (size.y);
+        imageStore(image, texelCoord, mix(topColor, vec4(col, 1.0), blend));
     }
 }
-

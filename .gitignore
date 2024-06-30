@@ -3,6 +3,7 @@
 /assets/brickadia
 /builddir
 subprojects/fastgltf-*
+subprojects/fastgltf
 subprojects/fmt-*
 subprojects/glm-*
 subprojects/SDL2-*
