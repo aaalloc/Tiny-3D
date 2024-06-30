@@ -80,6 +80,12 @@ struct GPUDrawPushConstants
     VkDeviceAddress vertexBuffer;
 };
 
+struct Light
+{
+    glm::vec4 position;
+    float power;
+};
+
 struct GPUSceneData
 {
     glm::mat4 view;
@@ -88,8 +94,7 @@ struct GPUSceneData
     glm::vec4 ambientColor;
     glm::vec4 sunlightDirection; // w for sun power
     glm::vec4 sunlightColor;
-    glm::vec4 lightPosition;
-    float lightPower;
+    struct Light lights[1];
 };
 
 enum class MaterialPass : uint8_t

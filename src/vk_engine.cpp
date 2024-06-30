@@ -105,8 +105,8 @@ void VulkanEngine::init()
 
     // everything went fine
     _isInitialized = true;
-    sceneData.lightPosition = glm::vec4(62.f, -35.f, -28.f, 1.0f);
-    sceneData.lightPower = 1.0f;
+    sceneData.lights[0].position = glm::vec4(62.f, -35.f, -28.f, 1.0f);
+    sceneData.lights[0].power = 1.0f;
 }
 
 void VulkanEngine::init_pipelines()
@@ -1225,10 +1225,10 @@ void VulkanEngine::run()
 
         // control sceneData.lightPosition
         ImGui::Begin("Light Control");
-        ImGui::SliderFloat("X", &sceneData.lightPosition.x, -100, 100);
-        ImGui::SliderFloat("Y", &sceneData.lightPosition.y, -100, 100);
-        ImGui::SliderFloat("Z", &sceneData.lightPosition.z, -100, 100);
-        ImGui::SliderFloat("Light strength", &sceneData.lightPower, 1, 100);
+        ImGui::SliderFloat("X", &sceneData.lights[0].position.x, -100, 100);
+        ImGui::SliderFloat("Y", &sceneData.lights[0].position.y, -100, 100);
+        ImGui::SliderFloat("Z", &sceneData.lights[0].position.z, -100, 100);
+        ImGui::SliderFloat("Light strength", &sceneData.lights[0].power, 1, 100);
         ImGui::End();
 
         ImGui::Render();
