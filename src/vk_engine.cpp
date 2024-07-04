@@ -86,12 +86,12 @@ void VulkanEngine::init()
     init_default_data();
 
     mainCamera.velocity = glm::vec3(0.f);
-    mainCamera.position = glm::vec3(0, 0, 5);
+    mainCamera.position = glm::vec3(-0.21, 7.41, -80);
 
-    mainCamera.pitch = 0;
-    mainCamera.yaw = 0;
+    mainCamera.pitch = -0.45;
+    mainCamera.yaw = -4;
 
-    mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
+    // mainCamera.position = glm::vec3(30.f, -00.f, -085.f);
 
     std::string structurePath = {"../assets/structure.glb"};
     auto structureFile = loadGltf(this, structurePath);
@@ -107,6 +107,9 @@ void VulkanEngine::init()
     _isInitialized = true;
     sceneData.lights[0].position = glm::vec4(62.f, -35.f, -28.f, 1.0f);
     sceneData.lights[0].power = 1.0f;
+
+    sceneData.lights[1].position = glm::vec4(42.f, -35.f, -28.f, 1.0f);
+    sceneData.lights[1].power = 2.0f;
 }
 
 void VulkanEngine::init_pipelines()
@@ -1149,7 +1152,7 @@ void VulkanEngine::run()
 {
     SDL_Event e;
     bool bQuit = false;
-    bool cameraMode = true;
+    bool cameraMode = false;
 
     // main loop
     while (!bQuit)
@@ -1173,13 +1176,12 @@ void VulkanEngine::run()
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
                 bQuit = true;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE)
-            {
                 cameraMode = !cameraMode;
-                if (cameraMode)
-                    SDL_SetRelativeMouseMode(SDL_TRUE);
-                else
-                    SDL_SetRelativeMouseMode(SDL_FALSE);
-            }
+
+            if (cameraMode)
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            else
+                SDL_SetRelativeMouseMode(SDL_FALSE);
 
             if (cameraMode)
                 mainCamera.processSDLEvent(e);
@@ -1229,6 +1231,13 @@ void VulkanEngine::run()
         ImGui::SliderFloat("Y", &sceneData.lights[0].position.y, -100, 100);
         ImGui::SliderFloat("Z", &sceneData.lights[0].position.z, -100, 100);
         ImGui::SliderFloat("Light strength", &sceneData.lights[0].power, 0, 3);
+        ImGui::End();
+
+        // camera position with pitch and yaw
+        ImGui::Begin("Camera Control");
+        ImGui::Text("Camera Position: %f %f %f", mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
+        ImGui::Text("Camera Pitch: %f", mainCamera.pitch);
+        ImGui::Text("Camera Yaw: %f", mainCamera.yaw);
         ImGui::End();
 
         ImGui::Render();

@@ -94,7 +94,7 @@ struct GPUSceneData
     glm::vec4 ambientColor;
     glm::vec4 sunlightDirection; // w for sun power
     glm::vec4 cameraPosition;
-    struct Light lights[1];
+    struct Light lights[2];
 };
 
 enum class MaterialPass : uint8_t
