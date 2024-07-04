@@ -82,7 +82,7 @@ struct GPUDrawPushConstants
 
 struct Light
 {
-    glm::vec4 position;
+    glm::vec3 position;
     float power;
 };
 
@@ -92,7 +92,6 @@ struct GPUSceneData
     glm::mat4 proj;
     glm::mat4 viewproj;
     glm::vec4 ambientColor;
-    glm::vec4 sunlightDirection; // w for sun power
     glm::vec4 cameraPosition;
     struct Light lights[2];
 };

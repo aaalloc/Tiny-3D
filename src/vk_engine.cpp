@@ -105,11 +105,11 @@ void VulkanEngine::init()
 
     // everything went fine
     _isInitialized = true;
-    sceneData.lights[0].position = glm::vec4(62.f, -35.f, -28.f, 1.0f);
+    sceneData.lights[0].position = glm::vec3(62.f, -35.f, -28.f);
     sceneData.lights[0].power = 1.0f;
 
-    sceneData.lights[1].position = glm::vec4(42.f, -35.f, -28.f, 1.0f);
-    sceneData.lights[1].power = 2.0f;
+    sceneData.lights[1].position = glm::vec3(13.685, -23.596, -71.821);
+    sceneData.lights[1].power = 1.0f;
 }
 
 void VulkanEngine::init_pipelines()
@@ -539,7 +539,6 @@ void VulkanEngine::init_descriptors()
         builder.add_binding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
         _singleImageDescriptorLayout = builder.build(_device, VK_SHADER_STAGE_FRAGMENT_BIT);
     }
-
     _drawImageDescriptors = globalDescriptorAllocator.allocate(_device, _drawImageDescriptorLayout);
 
     DescriptorWriter writer;
@@ -628,7 +627,6 @@ void VulkanEngine::update_scene()
     // some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
     sceneData.cameraPosition = glm::vec4(mainCamera.position, 1.0f);
-    sceneData.sunlightDirection = glm::vec4(0, 0, 0, 0.f);
 
     // make fulle rotation every 10 seconds
     float rotation = (SDL_GetTicks64() / 10000.f) * glm::radians(50.0f) * 5.f;

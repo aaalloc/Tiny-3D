@@ -14,7 +14,7 @@ float specularStrength = 2.f;
 vec3 lightColor = vec3(1.0f);
 vec3 calcPointLight(Light light, vec3 inFragPos, vec3 inNormal)
 {
-    vec3 lightDir = normalize(light.position.xyz - inFragPos);
+    vec3 lightDir = normalize(light.position - inFragPos);
     float diff = max(dot(lightDir, inNormal), 0.0f);
 
     vec3 viewDir = normalize(sceneData.cameraPosition.xyz - inFragPos);
@@ -28,6 +28,8 @@ vec3 calcPointLight(Light light, vec3 inFragPos, vec3 inNormal)
     return (ambient + diff) * light.power;
 }
 
+// Light lights[2] = Light[2](Light(vec3(62.0, -35.0, -28.0), 1.0),
+//                            Light(vec3(13.685, -23.596, -71.821), 1.0));
 void main()
 {
     vec3 result = vec3(0.0f);
