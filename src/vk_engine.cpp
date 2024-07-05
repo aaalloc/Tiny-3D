@@ -110,6 +110,9 @@ void VulkanEngine::init()
 
     sceneData.lights[1].position = glm::vec3(13.685, -23.596, -71.821);
     sceneData.lights[1].power = 1.0f;
+
+    sceneData.lights[2].position = glm::vec3(30.337, -34.831, -61.798);
+    sceneData.lights[2].power = 1.0f;
 }
 
 void VulkanEngine::init_pipelines()
@@ -1225,12 +1228,22 @@ void VulkanEngine::run()
 
         // control sceneData.lightPosition
         ImGui::Begin("Light Control");
-        ImGui::SliderFloat("X", &sceneData.lights[0].position.x, -100, 100);
-        ImGui::SliderFloat("Y", &sceneData.lights[0].position.y, -100, 100);
-        ImGui::SliderFloat("Z", &sceneData.lights[0].position.z, -100, 100);
-        ImGui::SliderFloat("Light strength", &sceneData.lights[0].power, 0, 3);
-        ImGui::End();
 
+        for (int i = 0; i < 3; ++i)
+        {
+            std::string label = "Light " + std::to_string(i + 1);
+
+            if (ImGui::TreeNode(label.c_str()))
+            {
+                ImGui::SliderFloat("X", &sceneData.lights[i].position.x, -100, 100);
+                ImGui::SliderFloat("Y", &sceneData.lights[i].position.y, -100, 100);
+                ImGui::SliderFloat("Z", &sceneData.lights[i].position.z, -100, 100);
+                ImGui::SliderFloat("Light strength", &sceneData.lights[i].power, 0, 3);
+                ImGui::TreePop();
+            }
+        }
+
+        ImGui::End();
         // camera position with pitch and yaw
         ImGui::Begin("Camera Control");
         ImGui::Text("Camera Position: %f %f %f", mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);

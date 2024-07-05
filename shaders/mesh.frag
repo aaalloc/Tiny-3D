@@ -33,7 +33,7 @@ vec3 calcPointLight(Light light, vec3 inFragPos, vec3 inNormal)
 void main()
 {
     vec3 result = vec3(0.0f);
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
         result += calcPointLight(sceneData.lights[i], inFragPos, inNormal);
     vec3 color = inColor * texture(colorTex, inUV).xyz;
     outFragColor = vec4(result * color, 1.0f);

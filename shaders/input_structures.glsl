@@ -12,7 +12,7 @@ layout(set = 0, binding = 0) uniform SceneData
     mat4 viewproj;
     vec4 ambientColor;
     vec4 cameraPosition;
-    Light lights[2];
+    Light lights[3];
 }
 sceneData;
 

@@ -86,6 +86,7 @@ struct Light
     float power;
 };
 
+// #pragma GCC diagnostic warning "-Wpadded"
 struct GPUSceneData
 {
     glm::mat4 view;
@@ -93,8 +94,9 @@ struct GPUSceneData
     glm::mat4 viewproj;
     glm::vec4 ambientColor;
     glm::vec4 cameraPosition;
-    struct Light lights[2];
+    struct Light lights[3];
 };
+// #pragma GCC diagnostic pop
 
 enum class MaterialPass : uint8_t
 {
