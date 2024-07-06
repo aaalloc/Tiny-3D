@@ -2,6 +2,8 @@
 /bin
 /assets/brickadia
 /builddir
+/.zed
+/.cache
 subprojects/fastgltf-*
 subprojects/fastgltf
 subprojects/fmt-*
