@@ -1,5 +1,5 @@
 [wrap-git]
 directory = fastgltf
 url = https://github.com/spnda/fastgltf.git
-revision = main
+revision = b73f25b68b38d0ca04a6150cadd64e873a0367ca
 method = cmake
