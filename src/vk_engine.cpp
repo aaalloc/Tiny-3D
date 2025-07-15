@@ -1,5 +1,6 @@
 ﻿//> includes
 #include "vk_engine.h"
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include "SDL.h"
 #include "SDL_vulkan.h"

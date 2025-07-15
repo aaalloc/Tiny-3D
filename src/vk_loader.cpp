@@ -1,4 +1,5 @@
-﻿
+﻿#define GLM_ENABLE_EXPERIMENTAL
+
 #include "vk_loader.h"
 #include "stb_image.h"
 #include <iostream>

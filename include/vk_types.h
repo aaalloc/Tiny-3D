@@ -16,6 +16,7 @@
 #include <vulkan/vulkan.h>
 
 #include <fmt/core.h>
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
